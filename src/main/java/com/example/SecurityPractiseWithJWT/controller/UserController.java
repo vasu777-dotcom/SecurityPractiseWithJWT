@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -25,9 +24,6 @@ public class UserController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
 
     @Autowired
     private JwtUtil util;
@@ -49,8 +45,7 @@ public class UserController {
     public ResponseEntity<Token> generateToken(@RequestBody UserDetails userDetails){
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword()));
-        org.springframework.security.core.userdetails.UserDetails iUserDetails = userDetailsService.loadUserByUsername(userDetails.getUsername());
-        String token = util.generateToken(iUserDetails.getUsername());
+        String token = util.generateToken(userDetails.getUsername());
         return ResponseEntity.ok(new Token(token));
     }
 }
